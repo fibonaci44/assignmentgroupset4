@@ -1,5 +1,6 @@
 #the data class
 import pyodbc
+
 class Data:
     def Connect(self, myDatabase):
         '''
