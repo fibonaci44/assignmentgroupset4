@@ -11,6 +11,20 @@
 '''
 #main.py
 
+
+import pyodbc
+from sqlcodePackage.sqlcode import Data
+
+
 if __name__ =="__main__":
     
-    
+    data = Data()
+    query_result = data.run_query1("""
+    SELECT TOP (10) i.Ingredient, SUM(tod.Quantity) AS TotalSold
+    FROM dbo.tIngredient i
+    INNER JOIN dbo.tProductIngredient pi ON pi.IngredientID = i.IngredientID
+    INNER JOIN dbo.tProduct p ON p.ProductID = pi.ProductID
+    INNER JOIN dbo.tOrderDetail tod ON tod.ProductID = p.ProductID
+    GROUP BY i.Ingredient
+    ORDER BY TotalSold DESC;
+    """)
