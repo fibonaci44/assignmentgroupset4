@@ -29,22 +29,23 @@ def main():
         if choice == '1':
             # Option 1: Retrieve employee with most sales
             print("Option 1 selected")
-            employee_most_sales = data.GetEmployeeWithMostSales()
+            employee_most_sales = data.GetEmployeeWithMostSales() # Call the function to get results
             print(employee_most_sales)
             print("LastName + FirstName + Transactions made.")
             
         elif choice == '2':
             # Implement option 2
             print("Option 2 selected")
-            LargesttoSmallestPrice = myData.LargesttoSmallestPrice()
+            LargesttoSmallestPrice = myData.LargesttoSmallestPrice() # Call the function to get results
             print(LargesttoSmallestPrice)
         
         elif choice == '3':
             # Implement option 3
             print("Option 3 selected")
-            # Call the relevant function from the Data class
-            Top10Ingedrients = myData2.Top10Ingedrients()
-            print(Top10Ingedrients)
+            Top10Ingredients = myData2.Top10Ingedrients()  # Call the function to get results
+            #clean up the data, its ugly
+            formatted_output = ",\n".join([f"{ingredient[0]:<50} ({ingredient[1]:>5})" for ingredient in Top10Ingredients])
+            print(formatted_output)
             
         elif choice.lower() == 'q':
             print("Exiting the program...")

@@ -1,6 +1,6 @@
 #sqlcode.py
-
-import pyodbc 
+ 
+import pyodbc
 class Data:
     def Connect(self, myDatabase):
         '''
@@ -72,7 +72,7 @@ class Data:
         
         query3 = """
             SELECT TOP (10)
-        CASE 
+        CASE
             WHEN CHARINDEX('(', i.Ingredient) > 0 THEN SUBSTRING(i.Ingredient, 1, CHARINDEX('(', i.Ingredient) - 1)
             ELSE i.Ingredient
         END AS Ingredient,
@@ -82,14 +82,13 @@ class Data:
         INNER JOIN dbo.tProduct p ON p.ProductID = pi.ProductID
         INNER JOIN dbo.tOrderDetail tod ON tod.ProductID = p.ProductID
         GROUP BY
-        CASE 
+        CASE
             WHEN CHARINDEX('(', i.Ingredient) > 0 THEN SUBSTRING(i.Ingredient, 1, CHARINDEX('(', i.Ingredient) - 1)
             ELSE i.Ingredient
         END
         ORDER BY TotalSold DESC;
         """
         cursor.execute(query3)
-        results = cursor.fetchall()
-        # Close the cursor and connection
+        results = cursor.fetchall()  # Store the fetched results
         cursor.close()
-        return results
+        return results  # Return the retrieved results
