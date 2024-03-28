@@ -1,8 +1,7 @@
 #sqlcode.py
-#the data class
-import pyodbc
-from pip._vendor.pyparsing import results
 
+import pyodbc
+ 
 class Data:
     def Connect(self, myDatabase):
         '''
@@ -11,21 +10,75 @@ class Data:
         '''
         conn = pyodbc.connect('Driver={SQL Server};'
                           'Server=lcb-sql.uccob.uc.edu\\nicholdw;'
-                          'Database=GroceryStoreSimulator;'
+                          'Database=' + myDatabase + ';'
                           'uid=IS4010Login;'
                           'pwd=P@ssword2;')
         # Submit a query to the SQL Server instance and store the results in the cursor object
         cursor = conn.cursor()
         return cursor
     
-    def run_query1(self, query1):
+    def LargesttoSmallestPrice(self):
+        '''
+        Retrieve the Prices for all Products and sort it from largest to smallest price
+        @return: Largest to Smallest Price list with Description and ProductID
+        '''
+        cursor = self.Connect("GroceryStoreSimulator")
+        
+        query2 = """
+                SELECT ProductID, Description, InitialPricePerSellableUnit AS LargestoSmallestPrice
+                FROM dbo.tProduct
+                ORDER BY [LargestoSmallestPrice] DESC;
+                """
+        
+        cursor.execute(query2)
+        results = cursor.fetchall()
+        # Close the cursor and connection
+        cursor.close()
+        return results
+    
+    def GetEmployeeWithMostSales(self):
+        '''
+        Retrieve the employee who sold the most products
+        @return: Employee information with the highest number of transactions
+        '''
+        cursor = self.Connect("GroceryStoreSimulator")  
+ 
+        # SQL query to find the employee who sold the most products
+        query = '''
+            SELECT LTRIM(RTRIM(e.[LastName])) AS LastName,
+               LTRIM(RTRIM(e.[FirstName])) AS FirstName,
+               COUNT(t.[TransactionID]) AS TotalTransactions
+               FROM [dbo].[tEmpl] e
+               INNER JOIN [dbo].[tTransaction] t ON e.[EmplID] = t.[EmplID]
+               GROUP BY e.[EmplID], e.[Empl], e.[LastName], e.[FirstName]
+               ORDER BY TotalTransactions DESC;
+        '''
+        
+        cursor.execute(query)
+        result = cursor.fetchall()
+        # Close the cursor and connection
+        cursor.close()
+        return result
+    
+    def Top10Ingedrients(self):
         '''
         Execute query1 and return results
-        @param query: the SSMS SQL query to execute 
+        @param query: the SSMS SQL query to execute
         @return: results
         '''
         cursor = self.Connect("GroceryStoreSimulator")
-        cursor.execute(query1)
-        results = cursor.fetchall()
-        return results
         
+        query3 = """
+            SELECT TOP (10) i.Ingredient, SUM(tod.Quantity) AS TotalSold
+            FROM dbo.tIngredient i
+            INNER JOIN dbo.tProductIngredient pi ON pi.IngredientID = i.IngredientID
+            INNER JOIN dbo.tProduct p ON p.ProductID = pi.ProductID
+            INNER JOIN dbo.tOrderDetail tod ON tod.ProductID = p.ProductID
+            GROUP BY i.Ingredient
+            ORDER BY TotalSold DESC;
+            """
+        cursor.execute(query3)
+        results = cursor.fetchall()
+        # Close the cursor and connection
+        cursor.close()
+        return results
