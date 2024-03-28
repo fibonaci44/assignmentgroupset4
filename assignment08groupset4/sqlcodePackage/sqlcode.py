@@ -1,7 +1,6 @@
 #sqlcode.py
 
-import pyodbc
- 
+import pyodbc 
 class Data:
     def Connect(self, myDatabase):
         '''
@@ -18,6 +17,7 @@ class Data:
         return cursor
     
     def LargesttoSmallestPrice(self):
+        #troegele
         '''
         Retrieve the Prices for all Products and sort it from largest to smallest price
         @return: Largest to Smallest Price list with Description and ProductID
@@ -37,6 +37,7 @@ class Data:
         return results
     
     def GetEmployeeWithMostSales(self):
+        #willi6d3
         '''
         Retrieve the employee who sold the most products
         @return: Employee information with the highest number of transactions
@@ -61,6 +62,7 @@ class Data:
         return result
     
     def Top10Ingedrients(self):
+        #gilligtp
         '''
         Execute query1 and return results
         @param query: the SSMS SQL query to execute
@@ -69,14 +71,23 @@ class Data:
         cursor = self.Connect("GroceryStoreSimulator")
         
         query3 = """
-            SELECT TOP (10) i.Ingredient, SUM(tod.Quantity) AS TotalSold
-            FROM dbo.tIngredient i
-            INNER JOIN dbo.tProductIngredient pi ON pi.IngredientID = i.IngredientID
-            INNER JOIN dbo.tProduct p ON p.ProductID = pi.ProductID
-            INNER JOIN dbo.tOrderDetail tod ON tod.ProductID = p.ProductID
-            GROUP BY i.Ingredient
-            ORDER BY TotalSold DESC;
-            """
+            SELECT TOP (10)
+        CASE 
+            WHEN CHARINDEX('(', i.Ingredient) > 0 THEN SUBSTRING(i.Ingredient, 1, CHARINDEX('(', i.Ingredient) - 1)
+            ELSE i.Ingredient
+        END AS Ingredient,
+        SUM(tod.Quantity) AS TotalSold
+        FROM dbo.tIngredient i
+        INNER JOIN dbo.tProductIngredient pi ON pi.IngredientID = i.IngredientID
+        INNER JOIN dbo.tProduct p ON p.ProductID = pi.ProductID
+        INNER JOIN dbo.tOrderDetail tod ON tod.ProductID = p.ProductID
+        GROUP BY
+        CASE 
+            WHEN CHARINDEX('(', i.Ingredient) > 0 THEN SUBSTRING(i.Ingredient, 1, CHARINDEX('(', i.Ingredient) - 1)
+            ELSE i.Ingredient
+        END
+        ORDER BY TotalSold DESC;
+        """
         cursor.execute(query3)
         results = cursor.fetchall()
         # Close the cursor and connection
